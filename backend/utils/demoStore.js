@@ -60,6 +60,18 @@ const store = {
       updatedAt: monthDate(0, 1)
     }
   ],
+  savingsGoals: [
+    {
+      _id: "goal-emergency",
+      userId: seededUserId,
+      name: "Emergency fund",
+      targetAmount: 150000,
+      currentAmount: 62500,
+      targetDate: monthDate(5, 1),
+      createdAt: monthDate(-2, 7),
+      updatedAt: monthDate(-1, 12)
+    }
+  ],
   resetTokens: []
 };
 
@@ -273,6 +285,48 @@ export const demoStore = {
     if (index === -1) store.budgets.push(budget);
     else store.budgets[index] = budget;
     return toResponse(budget);
+  },
+
+  listSavingsGoals(userId) {
+    return store.savingsGoals
+      .filter((item) => item.userId === String(userId))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map(toResponse);
+  },
+
+  createSavingsGoal(userId, payload) {
+    const goal = {
+      _id: randomUUID(),
+      userId: String(userId),
+      name: payload.name,
+      targetAmount: Number(payload.targetAmount),
+      currentAmount: Number(payload.currentAmount),
+      targetDate: payload.targetDate ? new Date(payload.targetDate) : undefined,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    store.savingsGoals.push(goal);
+    return toResponse(goal);
+  },
+
+  updateSavingsGoal(userId, id, payload) {
+    const index = store.savingsGoals.findIndex((item) => item._id === id && item.userId === String(userId));
+    if (index === -1) return null;
+    store.savingsGoals[index] = {
+      ...store.savingsGoals[index],
+      name: payload.name,
+      targetAmount: Number(payload.targetAmount),
+      currentAmount: Number(payload.currentAmount),
+      targetDate: payload.targetDate ? new Date(payload.targetDate) : undefined,
+      updatedAt: new Date()
+    };
+    return toResponse(store.savingsGoals[index]);
+  },
+
+  deleteSavingsGoal(userId, id) {
+    const index = store.savingsGoals.findIndex((item) => item._id === id && item.userId === String(userId));
+    if (index === -1) return null;
+    return store.savingsGoals.splice(index, 1)[0];
   },
 
   budgetStatus(userId, month = now.getMonth() + 1, year = now.getFullYear()) {
