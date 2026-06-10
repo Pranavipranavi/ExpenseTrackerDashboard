@@ -93,7 +93,7 @@ const Analytics = () => {
       </motion.div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <ChartBox title="Expense distribution" empty={!charts.categoryDistribution.length}>
+        <ChartBox title="Expense distribution" helper="Shows which expense categories consume the largest share of spending." empty={!charts.categoryDistribution.length}>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie data={charts.categoryDistribution} dataKey="value" nameKey="name" innerRadius={58} outerRadius={92} paddingAngle={3}>
@@ -105,7 +105,7 @@ const Analytics = () => {
           </ResponsiveContainer>
         </ChartBox>
 
-        <ChartBox title="Monthly expenses" empty={!charts.monthlyExpenses.some((item) => item.amount > 0)}>
+        <ChartBox title="Monthly expenses" helper="Tracks total expenses by month so spending spikes are easy to spot." empty={!charts.monthlyExpenses.some((item) => item.amount > 0)}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={charts.monthlyExpenses}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
@@ -117,7 +117,7 @@ const Analytics = () => {
           </ResponsiveContainer>
         </ChartBox>
 
-        <ChartBox title="Income vs expense" empty={!charts.incomeVsExpense.some((item) => item.income > 0 || item.expense > 0)}>
+        <ChartBox title="Income vs expense" helper="Compares monthly income and expenses to reveal cash-flow balance." empty={!charts.incomeVsExpense.some((item) => item.income > 0 || item.expense > 0)}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={charts.incomeVsExpense}>
               <defs>
@@ -140,7 +140,7 @@ const Analytics = () => {
           </ResponsiveContainer>
         </ChartBox>
 
-        <ChartBox title="Savings trend" empty={!charts.savingsTrend.some((item) => item.savings !== 0)}>
+        <ChartBox title="Savings trend" helper="Shows income minus expenses over time. Positive values mean you saved that month." empty={!charts.savingsTrend.some((item) => item.savings !== 0)}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={charts.savingsTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
@@ -152,7 +152,7 @@ const Analytics = () => {
           </ResponsiveContainer>
         </ChartBox>
 
-        <ChartBox title="Category spending trend" empty={!charts.categoryTrend.length}>
+        <ChartBox title="Category spending trend" helper="Ranks top spending categories to identify where money is going." empty={!charts.categoryTrend.length}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={charts.categoryTrend} layout="vertical" margin={{ left: 22 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />

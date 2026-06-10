@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { FiAlertTriangle, FiCheckCircle, FiTarget, FiTrendingUp } from "react-icons/fi";
 import { api, getErrorMessage } from "../api/http";
 import Button from "../components/ui/Button";
+import InfoTip from "../components/ui/InfoTip";
 import MotionPage from "../components/ui/MotionPage";
 import Skeleton from "../components/ui/Skeleton";
 import { currency, monthName } from "../utils/formatters";
@@ -165,7 +166,7 @@ const BudgetPlanner = () => {
 
           <div className="mt-8">
             <div className="mb-3 flex justify-between text-sm font-black">
-              <span>Percentage used</span>
+              <span className="inline-flex items-center gap-1.5">Percentage used <InfoTip label="Spent amount divided by your saved monthly budget." /></span>
               <span>{budget.used}%</span>
             </div>
             <div className="h-4 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-900">
@@ -189,7 +190,7 @@ const BudgetPlanner = () => {
         <div className="premium-card p-6">
           <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
             <div>
-              <p className="label">Savings goal</p>
+              <p className="label inline-flex items-center gap-1.5">Savings goal <InfoTip label="Track progress toward a specific financial target, such as an emergency fund or travel fund." /></p>
               <h3 className="mt-2 text-2xl font-black">{goal.name}</h3>
             </div>
             <span className="rounded-lg bg-violet-100 px-3 py-2 text-sm font-black text-violet-700 dark:bg-violet-500/10 dark:text-highlight">

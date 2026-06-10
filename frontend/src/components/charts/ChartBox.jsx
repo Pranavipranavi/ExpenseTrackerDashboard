@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 
 import EmptyState from "../ui/EmptyState";
+import InfoTip from "../ui/InfoTip";
 
-const ChartBox = ({ title, children, empty = false, eyebrow = "Live analytics" }) => (
+const ChartBox = ({ title, children, empty = false, eyebrow = "Analytics", helper = "Interactive chart generated from your transaction data." }) => (
   <motion.section
     initial={{ opacity: 0, y: 18 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -14,7 +15,10 @@ const ChartBox = ({ title, children, empty = false, eyebrow = "Live analytics" }
     <div className="mb-5 flex items-center justify-between gap-3">
       <div>
         <p className="label">{eyebrow}</p>
-        <h2 className="mt-1 text-base font-black text-slate-950 dark:text-white">{title}</h2>
+        <h2 className="mt-1 inline-flex items-center gap-1.5 text-base font-black text-slate-950 dark:text-white">
+          {title}
+          {helper && <InfoTip label={helper} />}
+        </h2>
       </div>
       <span className="h-2.5 w-2.5 rounded-full bg-success shadow-[0_0_0_5px_rgba(34,197,94,0.12)]" />
     </div>

@@ -9,8 +9,12 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
   const stored = localStorage.getItem("finora_auth");
   if (stored) {
-    const { token } = JSON.parse(stored);
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const { token } = JSON.parse(stored);
+      if (token) config.headers.Authorization = `Bearer ${token}`;
+    } catch {
+      localStorage.removeItem("finora_auth");
+    }
   }
   return config;
 });

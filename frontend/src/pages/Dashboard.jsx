@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FiActivity, FiCreditCard, FiDollarSign, FiPieChart, FiTarget, FiTrendingDown, FiTrendingUp, FiZap } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { FiActivity, FiCreditCard, FiDollarSign, FiPieChart, FiPlus, FiTarget, FiTrendingDown, FiTrendingUp, FiZap } from "react-icons/fi";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { api, getErrorMessage } from "../api/http";
 import ActivityFeed from "../components/dashboard/ActivityFeed";
 import InsightCard from "../components/dashboard/InsightCard";
 import StatCard from "../components/dashboard/StatCard";
 import ChartBox from "../components/charts/ChartBox";
+import Button from "../components/ui/Button";
+import EmptyState from "../components/ui/EmptyState";
+import InfoTip from "../components/ui/InfoTip";
 import MotionPage from "../components/ui/MotionPage";
 import Skeleton from "../components/ui/Skeleton";
 import { currency } from "../utils/formatters";
@@ -40,15 +44,16 @@ const Dashboard = () => {
 
   if (loading) return <MotionPage><Skeleton rows={6} /></MotionPage>;
 
+  const isEmptyAccount = summary.totalTransactions === 0;
   const stats = [
-    ["Total Balance", summary.totalBalance, FiDollarSign, "sky", true],
-    ["Total Income", summary.totalIncome, FiTrendingUp, "green", true],
-    ["Total Expenses", summary.totalExpenses, FiTrendingDown, "pink", true],
-    ["Monthly Savings", summary.monthlySavings, FiZap, "violet", true],
-    ["Savings Rate", summary.savingsRate, FiPieChart, "warm", false, "%"],
-    ["Total Transactions", summary.totalTransactions, FiCreditCard, "sky", false],
-    ["Current Month Spending", summary.currentMonthSpending, FiActivity, "pink", true],
-    ["Monthly Budget Status", summary.budgetUsed, FiTarget, "green", false, "%"]
+    ["Total Balance", summary.totalBalance, FiDollarSign, "sky", true, "", "Income minus expenses across all transactions."],
+    ["Total Income", summary.totalIncome, FiTrendingUp, "green", true, "", "All income recorded in this account."],
+    ["Total Expenses", summary.totalExpenses, FiTrendingDown, "pink", true, "", "All expenses recorded in this account."],
+    ["Monthly Savings", summary.monthlySavings, FiZap, "violet", true, "", "This month's income minus expenses."],
+    ["Savings Rate", summary.savingsRate, FiPieChart, "warm", false, "%", "Monthly savings divided by monthly income."],
+    ["Total Transactions", summary.totalTransactions, FiCreditCard, "sky", false, "", "Total number of income and expense entries."],
+    ["Current Month Spending", summary.currentMonthSpending, FiActivity, "pink", true, "", "Expenses recorded during the current month."],
+    ["Monthly Budget Status", summary.budgetUsed, FiTarget, "green", false, "%", "Percentage of your monthly budget already used."]
   ];
 
   const chartTooltip = {
@@ -77,30 +82,38 @@ const Dashboard = () => {
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:min-w-80">
             <div className="rounded-xl border border-slate-200/80 bg-white/80 p-4 dark:border-white/10 dark:bg-white/10">
-              <p className="label">Budget score</p>
+              <p className="label inline-flex items-center gap-1.5">Budget score <InfoTip label="A 0-100 score based on budget usage and savings rate. Higher means healthier monthly control." /></p>
               <p className="mt-2 text-3xl font-black text-sky-600 dark:text-primary">{summary.budgetHealthScore}/100</p>
             </div>
             <div className="rounded-xl border border-slate-200/80 bg-white/80 p-4 dark:border-white/10 dark:bg-white/10">
-              <p className="label">Savings rate</p>
+              <p className="label inline-flex items-center gap-1.5">Savings rate <InfoTip label="The share of this month's income that remains after expenses." /></p>
               <p className="mt-2 text-3xl font-black text-emerald-600">{summary.savingsRate}%</p>
             </div>
           </div>
         </div>
       </section>
 
-      <motion.div
+      {isEmptyAccount ? (
+        <EmptyState
+          title="Your dashboard is ready for real data"
+          description="Add your first income or expense to unlock charts, insights, activity, savings rate, and budget health scoring."
+          action={<Button as={Link} to="/transactions"><FiPlus /> Add transaction</Button>}
+        />
+      ) : null}
+
+      {!isEmptyAccount && <motion.div
         className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
         initial="hidden"
         animate="show"
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05 } } }}
       >
-        {stats.map(([label, value, icon, tone, money, suffix]) => (
-          <StatCard key={label} label={label} value={value} icon={icon} tone={tone} currencyValue={money} suffix={suffix || ""} />
+        {stats.map(([label, value, icon, tone, money, suffix, detail]) => (
+          <StatCard key={label} label={label} value={value} icon={icon} tone={tone} currencyValue={money} suffix={suffix || ""} detail={detail} />
         ))}
-      </motion.div>
+      </motion.div>}
 
-      <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-        <ChartBox title="Income vs expense" empty={!charts.incomeVsExpense.some((item) => item.income > 0 || item.expense > 0)}>
+      {!isEmptyAccount && <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+        <ChartBox title="Income vs expense" helper="Compares income and expenses over the last six months." empty={!charts.incomeVsExpense.some((item) => item.income > 0 || item.expense > 0)}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={charts.incomeVsExpense}>
               <defs>
@@ -129,9 +142,9 @@ const Dashboard = () => {
             </motion.div>
           ))}
         </motion.div>
-      </div>
+      </div>}
 
-      <ActivityFeed items={activity} />
+      {!isEmptyAccount && <ActivityFeed items={activity} />}
     </MotionPage>
   );
 };

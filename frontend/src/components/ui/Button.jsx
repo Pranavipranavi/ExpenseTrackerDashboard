@@ -8,9 +8,9 @@ const variants = {
   danger: "bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-[0_14px_34px_rgba(244,63,94,0.22)] hover:-translate-y-0.5 hover:shadow-[0_18px_42px_rgba(244,63,94,0.28)]"
 };
 
-const Button = ({ children, className, variant = "primary", type = "button", ...props }) => (
-  <button
-    type={type}
+const Button = ({ as: Component = "button", children, className, variant = "primary", type = "button", ...props }) => (
+  <Component
+    {...(Component === "button" ? { type } : {})}
     className={clsx(
       "focus-ring inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-black transition duration-200 active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60",
       variants[variant],
@@ -20,7 +20,7 @@ const Button = ({ children, className, variant = "primary", type = "button", ...
     {...props}
   >
     {children}
-  </button>
+  </Component>
 );
 
 export default Button;

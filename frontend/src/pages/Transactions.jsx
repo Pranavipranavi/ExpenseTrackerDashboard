@@ -5,6 +5,7 @@ import { api, getErrorMessage } from "../api/http";
 import TransactionForm from "../components/transactions/TransactionForm";
 import Button from "../components/ui/Button";
 import EmptyState from "../components/ui/EmptyState";
+import InfoTip from "../components/ui/InfoTip";
 import Modal from "../components/ui/Modal";
 import MotionPage from "../components/ui/MotionPage";
 import Skeleton from "../components/ui/Skeleton";
@@ -136,37 +137,60 @@ const Transactions = () => {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={() => runExport("csv")} disabled={exporting === "csv"}><FiDownload /> CSV</Button>
-            <Button variant="secondary" onClick={() => runExport("pdf")} disabled={exporting === "pdf"}><FiFileText /> PDF</Button>
+            <Button variant="secondary" onClick={() => runExport("csv")} disabled={exporting === "csv"} title="Download the currently filtered transactions as a CSV file" aria-label="Export filtered transactions as CSV"><FiDownload /> CSV</Button>
+            <Button variant="secondary" onClick={() => runExport("pdf")} disabled={exporting === "pdf"} title="Download the currently filtered transactions as a PDF report" aria-label="Export filtered transactions as PDF"><FiFileText /> PDF</Button>
             <Button onClick={() => setModal({ type: "form", transaction: null })}><FiPlus /> Add transaction</Button>
           </div>
         </div>
       </section>
 
       <section className="premium-card p-4">
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
-          <label className="relative xl:col-span-2">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input className="input input-with-icon" placeholder="Search title or category" value={filters.search} onChange={(event) => updateFilters({ ...filters, search: event.target.value })} />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+          <label className="relative block space-y-2 xl:col-span-2">
+            <span className="label">Search</span>
+            <div className="relative">
+              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input className="input input-with-icon" placeholder="Search title or category" value={filters.search} onChange={(event) => updateFilters({ ...filters, search: event.target.value })} />
+            </div>
           </label>
-          <select className="input" value={filters.type} onChange={(event) => updateFilters({ ...filters, type: event.target.value })}>
-            <option value="">All types</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-          <select className="input" value={filters.category} onChange={(event) => updateFilters({ ...filters, category: event.target.value })}>
-            <option value="">All categories</option>
-            {categories.map((category) => <option key={category}>{category}</option>)}
-          </select>
-          <select className="input" value={filters.sort} onChange={(event) => updateFilters({ ...filters, sort: event.target.value })}>
-            <option value="latest">Latest</option>
-            <option value="oldest">Oldest</option>
-            <option value="highest">Highest amount</option>
-            <option value="lowest">Lowest amount</option>
-          </select>
-          <Button variant="ghost" onClick={() => updateFilters(initialFilters)}>Reset</Button>
-          <input className="input" type="date" value={filters.from} onChange={(event) => updateFilters({ ...filters, from: event.target.value })} />
-          <input className="input" type="date" value={filters.to} onChange={(event) => updateFilters({ ...filters, to: event.target.value })} />
+          <label className="block space-y-2">
+            <span className="label">Type</span>
+            <select className="input" value={filters.type} onChange={(event) => updateFilters({ ...filters, type: event.target.value })}>
+              <option value="">All types</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </label>
+          <label className="block space-y-2">
+            <span className="label">Category</span>
+            <select className="input" value={filters.category} onChange={(event) => updateFilters({ ...filters, category: event.target.value })}>
+              <option value="">All categories</option>
+              {categories.map((category) => <option key={category}>{category}</option>)}
+            </select>
+          </label>
+          <label className="block space-y-2">
+            <span className="label">Sort</span>
+            <select className="input" value={filters.sort} onChange={(event) => updateFilters({ ...filters, sort: event.target.value })}>
+              <option value="latest">Latest</option>
+              <option value="oldest">Oldest</option>
+              <option value="highest">Highest amount</option>
+              <option value="lowest">Lowest amount</option>
+            </select>
+          </label>
+          <div className="flex items-end">
+            <Button variant="ghost" className="w-full" onClick={() => updateFilters(initialFilters)}>Reset</Button>
+          </div>
+          <label className="block space-y-2 md:col-span-1 xl:col-span-2">
+            <span className="label inline-flex items-center gap-1.5">From Date <InfoTip label="Only show transactions on or after this date." /></span>
+            <input className="input" type="date" value={filters.from} onChange={(event) => updateFilters({ ...filters, from: event.target.value })} aria-label="From Date" />
+          </label>
+          <label className="block space-y-2 md:col-span-1 xl:col-span-2">
+            <span className="label inline-flex items-center gap-1.5">To Date <InfoTip label="Only show transactions on or before this date." /></span>
+            <input className="input" type="date" value={filters.to} onChange={(event) => updateFilters({ ...filters, to: event.target.value })} aria-label="To Date" />
+          </label>
+          <p className="self-end text-xs font-semibold leading-5 text-slate-500 dark:text-slate-400 xl:col-span-2">
+            Date filters apply to the transaction date and also affect CSV/PDF exports.
+          </p>
         </div>
       </section>
 
@@ -174,7 +198,7 @@ const Transactions = () => {
         <>
           <div className="premium-card overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left text-sm">
+              <table className="w-full min-w-[860px] text-left text-sm">
                 <thead className="bg-slate-50 text-xs font-black uppercase text-slate-500 dark:bg-slate-900 dark:text-slate-400">
                   <tr>
                     <th className="px-5 py-4">Title</th>
@@ -203,10 +227,10 @@ const Transactions = () => {
                         {item.type === "income" ? "+" : "-"}{currency(item.amount)}
                       </td>
                       <td className="px-5 py-4">
-                        <div className="flex justify-end gap-1">
-                          <Button variant="ghost" className="h-9 w-9 p-0" onClick={() => setModal({ type: "details", transaction: item })} aria-label="View details"><FiEye /></Button>
-                          <Button variant="ghost" className="h-9 w-9 p-0" onClick={() => setModal({ type: "form", transaction: item })} aria-label="Edit"><FiEdit3 /></Button>
-                          <Button variant="ghost" className="h-9 w-9 p-0 text-rose-500" onClick={() => setModal({ type: "delete", transaction: item })} aria-label="Delete"><FiTrash2 /></Button>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="secondary" className="h-10 px-3 text-xs" onClick={() => setModal({ type: "details", transaction: item })} aria-label={`View details for ${item.title}`} title="View transaction details"><FiEye /><span className="hidden 2xl:inline">View</span></Button>
+                          <Button variant="secondary" className="h-10 px-3 text-xs" onClick={() => setModal({ type: "form", transaction: item })} aria-label={`Edit ${item.title}`} title="Edit transaction"><FiEdit3 /><span className="hidden 2xl:inline">Edit</span></Button>
+                          <Button variant="ghost" className="h-10 px-3 text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10" onClick={() => setModal({ type: "delete", transaction: item })} aria-label={`Delete ${item.title}`} title="Delete transaction"><FiTrash2 /><span className="hidden 2xl:inline">Delete</span></Button>
                         </div>
                       </td>
                     </tr>
@@ -231,7 +255,11 @@ const Transactions = () => {
           </div>
         </>
       ) : (
-        <EmptyState title="No transactions found" description="Adjust filters or add your first income or expense transaction." />
+        <EmptyState
+          title="No transactions found"
+          description="Adjust filters or add your first income or expense transaction to start building your dashboard."
+          action={<Button onClick={() => setModal({ type: "form", transaction: null })}><FiPlus /> Add transaction</Button>}
+        />
       )}
 
       <Modal open={modal.type === "form"} title={modal.transaction ? "Edit transaction" : "Add transaction"} onClose={() => setModal({ type: null, transaction: null })}>
