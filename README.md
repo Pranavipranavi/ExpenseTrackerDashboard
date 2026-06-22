@@ -13,7 +13,7 @@ Finora is a full-stack personal finance SaaS dashboard featuring rich analytics,
 ---
 
 ## Project Links
-* **GitHub Repository**: [https://github.com/sunnysuhas/Expense-Tracker-Dashboard](https://github.com/sunnysuhas/Expense-Tracker-Dashboard)
+* **GitHub Repository**: [https://github.com/Pranavipranavi/Expense-Tracker-Dashboard](https://github.com/Pranavipranavi/Expense-Tracker-Dashboard)
 * **Live Application**: [https://expense-tracker-dashboard-mauve.vercel.app](https://expense-tracker-dashboard-mauve.vercel.app)
 * **Backend API URL**: [https://expense-tracker-dashboard-dkio.onrender.com](https://expense-tracker-dashboard-dkio.onrender.com)
 * **API Health Check**: [https://expense-tracker-dashboard-dkio.onrender.com/api/health](https://expense-tracker-dashboard-dkio.onrender.com/api/health)
@@ -94,7 +94,7 @@ The system follows a classic decoupled Client-Server architecture:
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/sunnysuhas/Expense-Tracker-Dashboard.git
+git clone https://github.com/Pranavipranavi/Expense-Tracker-Dashboard.git
 cd Expense-Tracker-Dashboard
 npm run install:all
 ```
@@ -194,7 +194,7 @@ Successful application flow captures are saved in the [output-images](./output-i
 ---
 
 ## Author Information
-* **Name**: Naguru Suhas
-* **Intern ID**: CITS1993
+* **Name**: Sai Pranavi
+* **Intern ID**: CITS1983
 * **Role**: Full-Stack Developer Intern
 * **Organization**: Codtech IT Solutions Private Limited
