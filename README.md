@@ -6,8 +6,8 @@ Finora is a full-stack personal finance SaaS dashboard featuring rich analytics,
 
 ## Internship Submission Details
 * **Organization**: Codtech IT Solutions Private Limited
-* **Intern ID**: CITS1993
-* **Full Name**: Naguru Suhas
+* **Intern ID**: CITS1983
+* **Full Name**: Sai Pranavi
 * **Duration**: 8 Weeks (MERN Stack Track)
 
 ---
